@@ -52,7 +52,7 @@ function ray_color(r) {
     glMatrix.vec3.normalize(unit_direction, r.direction);
 
     let color = glMatrix.vec3.create();
-    t = 0.5 * (unit_direction[1] + 1.0); // -1  +1  to  0 - 1
+    t = 1.0 - (0.5 * (unit_direction[1] + 1.0)); // -1  +1  to  0 - 1
     let it = (1.0 - t);
     let vec_one = glMatrix.vec3.fromValues(it * 0.0, it * 0.5, it * 1.0);  // химичис с цветами 
     let vec_two = glMatrix.vec3.fromValues(t * 1.0, t * 1.0, t * 1.0);
@@ -129,7 +129,7 @@ function main() {
         for (let i = 0; i < image_width; i += 1) {
 
             let x = ((i / image_width) - 0.5) * 2.0 * aspect_ratio;
-            let y = ((j / image_heigth) - 0.5) * 2.0 * -1;
+            let y = ((j / image_heigth) - 0.5) * 2.0 * - 1;
 
             let dir = glMatrix.vec3.fromValues(x, y, -1.0);
             let ray = new Ray(origin, dir);
