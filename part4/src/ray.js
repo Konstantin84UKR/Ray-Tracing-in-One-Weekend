@@ -1,7 +1,7 @@
 
 //import { __esModule } from './gl-matrix.js';
 //import { sayHi, sayBye } from './say.js';
-import * as say from './say.js';
+//import * as say from './say.js';
 
 export default class Ray {
     constructor(origin, direction) {
