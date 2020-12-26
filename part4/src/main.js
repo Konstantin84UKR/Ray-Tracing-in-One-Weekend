@@ -1,5 +1,7 @@
 import * as Matrix from './gl-matrix.js';
 import Ray from './ray.js';
+import hitRecord from './hitRecord.js';
+import Sphere from './sphere.js';
 
 
 // Рисуем точку
@@ -25,34 +27,50 @@ function unit_vector(v) {
 }
 
 // в зависимрости от координат красим точку в которую попадает вектор
-function ray_color(r) {
-    let center = glMatrix.vec3.fromValues(0, 0, -1.0);
-    // if (hit_sphere(center, 0.5, r) > 0.0) {
-    //     let color2 = [1.0, 0.5, 0.0];
+function ray_color(r, worldObj) {
+
+    let colorObj = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+
+    let rec = new hitRecord();
+    // Перебираем все обекты в сцене и ищем пересечения с лучем
+    for (let index = 0; index < worldObj.length; index++) {
+        const element = worldObj[index];
+
+        if (element.hit(r, 0, Number.MAX_SAFE_INTEGER, rec)) {
+
+            let res = glMatrix.vec3.create();
+
+            res[0] = (rec.normal[0] + colorObj[0]) * 0.5;
+            res[1] = (rec.normal[1] + colorObj[1]) * 0.5;
+            res[2] = (rec.normal[2] + colorObj[2]) * 0.5;
+
+            return res;
+        }
+    }
+
+    // //
+    // let center = glMatrix.vec3.fromValues(0, 0, -1.0);
+    // let t = hit_sphere(center, 0.5, r);
+    // if (t > 0.0) {
+    //     let N = glMatrix.vec3.create();
+    //     r.t = t;
+    //     N = r.getAt(t);
+    //     //glMatrix.vec3.scale(N, r.direction, r.t);
+    //     glMatrix.vec3.subtract(N, N, center);
+    //     glMatrix.vec3.normalize(N, N);
+    //     //return 0.5*color(N.x()+1, N.y()+1, N.z()+1);
+    //     let color2 = [0.0, 0.0, 0.0];
+    //     color2[0] = (N[0] + 1) * 0.5;
+    //     color2[1] = (N[1] + 1) * 0.5;
+    //     color2[2] = (N[2] + 1) * 0.5;
     //     return color2;
     // }
-
-    let t = hit_sphere(center, 0.5, r);
-    if (t > 0.0) {
-        let N = glMatrix.vec3.create();
-        r.t = t;
-        N = r.getAt(t);
-        //glMatrix.vec3.scale(N, r.direction, r.t);
-        glMatrix.vec3.subtract(N, N, center);
-        glMatrix.vec3.normalize(N, N);
-        //return 0.5*color(N.x()+1, N.y()+1, N.z()+1);
-        let color2 = [0.0, 0.0, 0.0];
-        color2[0] = (N[0] + 1) * 0.5;
-        color2[1] = (N[1] + 1) * 0.5;
-        color2[2] = (N[2] + 1) * 0.5;
-        return color2;
-    }
 
     let unit_direction = glMatrix.vec3.create();
     glMatrix.vec3.normalize(unit_direction, r.direction);
 
     let color = glMatrix.vec3.create();
-    t = 1.0 - (0.5 * (unit_direction[1] + 1.0)); // -1  +1  to  0 - 1
+    let t = 1.0 - (0.5 * (unit_direction[1] + 1.0)); // -1  +1  to  0 - 1
     let it = (1.0 - t);
     let vec_one = glMatrix.vec3.fromValues(it * 0.0, it * 0.5, it * 1.0);  // химичис с цветами 
     let vec_two = glMatrix.vec3.fromValues(t * 1.0, t * 1.0, t * 1.0);
@@ -70,21 +88,21 @@ function hit_sphere(center, radius, ray) {
 
     let a = glMatrix.vec3.dot(ray.direction, ray.direction);
 
-
     let dot_oc_direction = glMatrix.vec3.dot(oc, ray.direction);
     let b = 2.0 * dot_oc_direction;
+    let half_b = dot_oc_direction;
 
     let dot_c_c = glMatrix.vec3.dot(oc, oc);
     let c = dot_c_c - (radius * radius);
 
-    let discriminant = (b * b) - (4 * a * c);
+    let discriminant = (half_b * half_b) - (a * c);
     //console.log("discriminant = " + discriminant);
 
 
     if (discriminant < 0) {
         return -1;
     } else {
-        return (-b - Math.sqrt(discriminant)) / (2.0 * a);
+        return (-half_b - Math.sqrt(discriminant)) / (a);
     }
 
 
@@ -122,6 +140,11 @@ function main() {
     // let lower_left_corner = origin - horizontal / 2 - vertical / 2 - focal;
 
 
+    let sphere1 = new Sphere(glMatrix.vec3.fromValues(0, 0, -1.0), 0.5);
+    let sphere2 = new Sphere(glMatrix.vec3.fromValues(0.0, -100.5, -1), 100.0);
+    let worldObj = [];
+    worldObj.push(sphere1);
+    worldObj.push(sphere2);
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; j += 1) {
@@ -132,8 +155,9 @@ function main() {
             let y = ((j / image_heigth) - 0.5) * 2.0 * - 1;
 
             let dir = glMatrix.vec3.fromValues(x, y, -1.0);
+            glMatrix.vec3.normalize(dir, dir);
             let ray = new Ray(origin, dir);
-            let pixel_color = ray_color(ray);
+            let pixel_color = ray_color(ray, worldObj);
 
             let ir = Math.floor(255.999 * pixel_color[0]);
             let ig = Math.floor(255.999 * pixel_color[1]);
