@@ -22,6 +22,12 @@ function ramdom_in_unit_sphere() {
         return p;
     }
 }
+function ramdom_unit_vector() {
+    let p = ramdom_in_unit_sphere();
+    glMatrix.vec3.normalize(p, p);
+    return p;
+}
+
 function length_squared(e) {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
@@ -30,10 +36,10 @@ function length_squared(e) {
 function ray_color(r, worldObj, depth) {
 
     if (depth <= 0) {
-        return glMatrix.vec3.fromValues(0.0, 1.0, 0.0);
+        return glMatrix.vec3.fromValues(0.0, 0.0, 0.0);
     }
 
-    let colorObj = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+    //let colorObj = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
 
     let rec = new hitRecord();
     // Перебираем все обекты в сцене и ищем пересечения с лучем
@@ -48,7 +54,8 @@ function ray_color(r, worldObj, depth) {
             let p_plus_n = glMatrix.vec3.create();
             let p_minus_tangent = glMatrix.vec3.create();
 
-            let ramdom_in_unit = ramdom_in_unit_sphere();
+            let ramdom_in_unit = ramdom_unit_vector();
+            //let ramdom_in_unit = ramdom_in_unit_sphere();
             // получаем случайный вектор от отчки каcания в пределах еденичной сферы
             glMatrix.vec3.add(p_plus_n, rec.p, rec.normal);
             glMatrix.vec3.add(target, p_plus_n, ramdom_in_unit);
@@ -134,9 +141,16 @@ function main() {
 
             }
 
-            color[0] += Math.floor(255.999 * clamp(pixel_color[0] / samples_per_pixel, 0.0, 0.999));
-            color[1] += Math.floor(255.999 * clamp(pixel_color[1] / samples_per_pixel, 0.0, 0.999));
-            color[2] += Math.floor(255.999 * clamp(pixel_color[2] / samples_per_pixel, 0.0, 0.999));
+            // gamma correction
+            let scale = 1 / samples_per_pixel;
+            let r = Math.sqrt(pixel_color[0] * scale);
+            let g = Math.sqrt(pixel_color[1] * scale);
+            let b = Math.sqrt(pixel_color[2] * scale);
+
+
+            color[0] += Math.floor(255.999 * clamp(r, 0.0, 0.999));
+            color[1] += Math.floor(255.999 * clamp(g, 0.0, 0.999));
+            color[2] += Math.floor(255.999 * clamp(b, 0.0, 0.999));
 
 
             let colorRGB = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
