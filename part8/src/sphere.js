@@ -1,10 +1,10 @@
 import * as Matrix from './gl-matrix.js';
 
 export default class Sphere {
-    constructor(c, r) {
+    constructor(c, r, m) {
         this.center = c;
         this.radius = r;
-        //this.matirial = m;
+        this.matirial = m;
     }
 
     hit(ray, t_min, t_max, hitRecord) {
@@ -65,6 +65,7 @@ export default class Sphere {
         glMatrix.vec3.normalize(N, N);
         hitRecord.normal = N;
         hitRecord.set_face_normal(ray, hitRecord.normal);
+        hitRecord.matetial = this.matirial;
 
         return true;
 

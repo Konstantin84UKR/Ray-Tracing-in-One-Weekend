@@ -7,7 +7,7 @@ export default class Camera {
         this.viewport_width = this.aspect_ratio * this.viewport_width;
         this.focal_length = 100.0;
 
-        this.origin = glMatrix.vec3.fromValues(0, 0, 0.0);
+        this.origin = glMatrix.vec3.fromValues(-0.0, 0.0, 1.0);
         this.horizontal = glMatrix.vec3.fromValues(this.viewport_width, 0, 0);
         this.vertical = glMatrix.vec3.fromValues(0, this.viewport_width, 0);
 

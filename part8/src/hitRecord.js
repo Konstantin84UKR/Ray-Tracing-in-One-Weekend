@@ -6,6 +6,7 @@ export default class hitRecord {
         this.normal = glMatrix.vec3.create();
         this.t = 0;
         this.front_face = false;
+        this.matetial = null;
     }
 
     set_face_normal(ray, outward_normal) {
