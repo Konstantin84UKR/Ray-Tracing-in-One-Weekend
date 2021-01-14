@@ -1,21 +1,21 @@
 import * as Matrix from './gl-matrix.js';
 
 export default class Sphere {
-    constructor(c, r) {
+    constructor(c, r, m) {
         this.center = c;
         this.radius = r;
-        //this.matirial = m;
+        this.matirial = m;
     }
 
     hit(ray, t_min, t_max, hitRecord) {
 
         let oc = glMatrix.vec3.create();
         glMatrix.vec3.subtract(oc, ray.origin, this.center);
-        // let dir = glMatrix.vec3.normalize(ray.direction, ray.direction);
+        let dir = glMatrix.vec3.normalize(ray.direction, ray.direction);
         let a = glMatrix.vec3.dot(ray.direction, ray.direction);
 
         //let dot_oc_direction = glMatrix.vec3.dot(oc, ray.direction);
-        //let b = 2.0 * glMatrix.vec3.dot(oc, ray.direction);
+        let b = 2.0 * glMatrix.vec3.dot(oc, ray.direction);
         let half_b = glMatrix.vec3.dot(oc, ray.direction);
 
         let dot_c_c = glMatrix.vec3.dot(oc, oc);
@@ -64,7 +64,8 @@ export default class Sphere {
         // glMatrix.vec3.scale(N, hitRecord.p, 1 / this.radius);
         glMatrix.vec3.normalize(N, N);
         hitRecord.normal = N;
-        hitRecord.set_face_normal(ray, N);
+        hitRecord.set_face_normal(ray, hitRecord.normal);
+        hitRecord.matetial = this.matirial;
 
         return true;
 

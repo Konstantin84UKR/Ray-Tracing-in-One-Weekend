@@ -115,7 +115,7 @@ function main() {
     point(ctx, color, 10, 59);
 
 
-    let sphere1 = new Sphere(glMatrix.vec3.fromValues(0, 0, -1.0), 0.5);
+    let sphere1 = new Sphere(glMatrix.vec3.fromValues(0.0, 0.0, -1.0), 0.5);
     let sphere2 = new Sphere(glMatrix.vec3.fromValues(0.0, -100.5, -1), 100.0);
     let worldObj = [];
     worldObj.push(sphere1);

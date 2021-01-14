@@ -60,6 +60,7 @@ function ray_color(r, worldObj, depth) {
             glMatrix.vec3.add(p_plus_n, rec.p, rec.normal);
             glMatrix.vec3.add(target, p_plus_n, ramdom_in_unit);
             glMatrix.vec3.sub(p_minus_tangent, target, rec.p);
+            glMatrix.vec3.normalize(p_minus_tangent, p_minus_tangent);
             let rayTemp = new Ray(rec.p, p_minus_tangent);
 
             glMatrix.vec3.scale(res, ray_color(rayTemp, worldObj, depth - 1), 0.5);
@@ -127,8 +128,12 @@ function main() {
             let pixel_color = glMatrix.vec3.create();
             for (let index = 0; index < samples_per_pixel; index++) {
 
-                let u = (((i + Math.random() * 0.5) / image_width) - 0.5) * 2.0 * cam.aspect_ratio;
-                let v = (((j + Math.random() * 0.5) / image_heigth) - 0.5) * 2.0 * - 1;
+                // let u = (((i + Math.random() * 0.5) / image_width) - 0.5) * 2.0 * cam.aspect_ratio;
+                // let v = (((j + Math.random() * 0.5) / image_heigth) - 0.5) * 2.0 * - 1;
+
+                let u = (((i + Math.random()) / image_width) - 0.5) * 2.0 * cam.aspect_ratio;
+                let v = (((j + Math.random()) / image_heigth) - 0.5) * 2.0 * -1;
+
 
                 let r = cam.get_ray(u, v);
                 //pixel_color = ray_color(r, worldObj, 50);

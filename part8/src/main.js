@@ -123,14 +123,14 @@ function main() {
     // point(ctx, color, 10, 59);
 
 
-    let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.8, 0.8, 0.0));
-    let material_center = new Lambertian(glMatrix.vec3.fromValues(0.1, 0.2, 0.5));
+    let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.8, 0.4, 0.0));
+    let material_center = new Lambertian(glMatrix.vec3.fromValues(0.9, 0.9, 0.9));
     let material_right = new Metal(glMatrix.vec3.fromValues(0.5, 0.5, 0.5), 0.1);
     let material_left = new Dielectric(glMatrix.vec3.fromValues(1.0, 1.0, 1.0), 1.52);
 
     let sphere1 = new Sphere(glMatrix.vec3.fromValues(0.0, 0.0, .0), 0.5, material_center);
-    let sphere2 = new Sphere(glMatrix.vec3.fromValues(1.0, 0.0, .0), 0.5, material_right);
-    let sphere3 = new Sphere(glMatrix.vec3.fromValues(-1.0, 0.0, .0), 0.5, material_left);
+    let sphere2 = new Sphere(glMatrix.vec3.fromValues(1.0, 0.0, .0), 0.5, material_center);
+    let sphere3 = new Sphere(glMatrix.vec3.fromValues(-1.0, 0.0, .0), 0.5, material_center);
     let sphere4 = new Sphere(glMatrix.vec3.fromValues(0.0, -1000.5, -1), 1000.0, material_ground);
 
     let worldObj = [];

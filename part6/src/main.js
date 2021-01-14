@@ -5,6 +5,26 @@ import Sphere from './sphere.js';
 import Camera from './camera.js';
 
 
+let tempHitRecord = new hitRecord();
+function hit(r, tmin, tmax, hitRecord, worldObj) {
+    var hitSomething = false;
+    var closestT = tmax;
+    for (var i = 0, len = worldObj.length; i < len; i++) {
+        if (worldObj[i].hit(r, tmin, closestT, tempHitRecord) > 0.0) {
+            if (tempHitRecord.t < closestT) {
+                hitRecord.t = tempHitRecord.t;
+                glMatrix.vec3.copy(hitRecord.p, tempHitRecord.p);
+                glMatrix.vec3.copy(hitRecord.normal, tempHitRecord.normal);
+                // hitRecord.material = tempHitRecord.material;
+                closestT = hitRecord.t;
+                hitSomething = true;
+            }
+
+        }
+    }
+
+    return hitSomething;
+}
 
 // Рисуем точку
 // получаем контекст, цвет и координаты точки на канвасе 
@@ -30,37 +50,37 @@ function length_squared(e) {
 function ray_color(r, worldObj, depth) {
 
     if (depth <= 0) {
-        return glMatrix.vec3.fromValues(0.0, 1.0, 0.0);
+        return glMatrix.vec3.fromValues(0.0, 0.0, 0.0);
     }
 
-    let colorObj = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+
 
     let rec = new hitRecord();
     // Перебираем все обекты в сцене и ищем пересечения с лучем
-    for (let index = 0; index < worldObj.length; index++) {
-        // const element = worldObj[index];
+    //for (let index = 0; index < worldObj.length; index++) {
+    // const element = worldObj[index];
+    let colorObj = glMatrix.vec3.fromValues(1.0, 1.0, 1.0);
+    let res = glMatrix.vec3.create();
 
-        let res = glMatrix.vec3.create();
+    if (hit(r, 0, Number.MAX_SAFE_INTEGER, rec, worldObj)) {
 
-        if (worldObj[index].hit(r, 0, Number.MAX_SAFE_INTEGER, rec)) {
+        let target = glMatrix.vec3.create();
+        let p_plus_n = glMatrix.vec3.create();
+        let p_minus_tangent = glMatrix.vec3.create();
 
-            let target = glMatrix.vec3.create();
-            let p_plus_n = glMatrix.vec3.create();
-            let p_minus_tangent = glMatrix.vec3.create();
+        let ramdom_in_unit = ramdom_in_unit_sphere();
+        // получаем случайный вектор от отчки каcания в пределах еденичной сферы
+        glMatrix.vec3.add(p_plus_n, rec.p, rec.normal);
+        glMatrix.vec3.add(target, p_plus_n, ramdom_in_unit);
+        glMatrix.vec3.sub(p_minus_tangent, target, rec.p);
+        let rayTemp = new Ray(rec.p, p_minus_tangent);
+        let colorTemp = ray_color(rayTemp, worldObj, depth - 1);
+        glMatrix.vec3.scale(colorObj, colorTemp, 0.5);
 
-            let ramdom_in_unit = ramdom_in_unit_sphere();
-            // получаем случайный вектор от отчки каcания в пределах еденичной сферы
-            glMatrix.vec3.add(p_plus_n, rec.p, rec.normal);
-            glMatrix.vec3.add(target, p_plus_n, ramdom_in_unit);
-            glMatrix.vec3.sub(p_minus_tangent, target, rec.p);
-            let rayTemp = new Ray(rec.p, p_minus_tangent);
-
-            glMatrix.vec3.scale(res, ray_color(rayTemp, worldObj, depth - 1), 0.5);
-
-            return res;
-        }
-
+        return colorObj;
     }
+
+    //}
 
     //---------------  FON -----------------------------//
     let unit_direction = glMatrix.vec3.create();
@@ -109,24 +129,24 @@ function main() {
     const image_width = canvas.width;
     const image_heigth = canvas.height;
     let cam = new Camera(image_width, image_heigth);
-    const samples_per_pixel = 4;
+    const samples_per_pixel = 128;
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
-    for (let j = 0; j < image_heigth; j += 1) {
+    for (let j = 0; j < image_heigth; ++j) {
 
-        for (let i = 0; i < image_width; i += 1) {
+        for (let i = 0; i < image_width; ++i) {
 
             let color = glMatrix.vec3.create();
             let pixel_color = glMatrix.vec3.create();
-            for (let index = 0; index < samples_per_pixel; index++) {
+            for (let index = 0; index < samples_per_pixel; ++index) {
 
-                let u = (((i + Math.random() * 0.5) / image_width) - 0.5) * 2.0 * cam.aspect_ratio;
-                let v = (((j + Math.random() * 0.5) / image_heigth) - 0.5) * 2.0 * - 1;
+                let u = (((i + Math.random() * 0.5) / (image_width - 1)) - 0.5) * 2.0 * cam.aspect_ratio;
+                let v = (((j + Math.random() * 0.5) / (image_heigth - 1)) - 0.5) * 2.0 * - 1;
 
                 let r = cam.get_ray(u, v);
                 //pixel_color = ray_color(r, worldObj, 50);
 
-                glMatrix.vec3.add(pixel_color, pixel_color, ray_color(r, worldObj, 50));
+                glMatrix.vec3.add(pixel_color, pixel_color, ray_color(r, worldObj, 128));
 
                 // color[0] += Math.floor(255.999 * clamp(pixel_color[0], 0.0, 0.999));
                 // color[1] += Math.floor(255.999 * clamp(pixel_color[1], 0.0, 0.999));

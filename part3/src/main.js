@@ -26,7 +26,7 @@ function unit_vector(v) {
 
 // в зависимрости от координат красим точку в которую попадает вектор
 function ray_color(r) {
-    let center = glMatrix.vec3.fromValues(0, 0, -1.0);
+    let center = glMatrix.vec3.fromValues(1.0, 1.0, -1.5);
     // if (hit_sphere(center, 0.5, r) > 0.0) {
     //     let color2 = [1.0, 0.5, 0.0];
     //     return color2;
