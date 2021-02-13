@@ -129,7 +129,7 @@ function main() {
     const image_width = canvas.width;
     const image_heigth = canvas.height;
     let cam = new Camera(image_width, image_heigth);
-    const samples_per_pixel = 128;
+    const samples_per_pixel = 20;
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; ++j) {
@@ -146,7 +146,7 @@ function main() {
                 let r = cam.get_ray(u, v);
                 //pixel_color = ray_color(r, worldObj, 50);
 
-                glMatrix.vec3.add(pixel_color, pixel_color, ray_color(r, worldObj, 128));
+                glMatrix.vec3.add(pixel_color, pixel_color, ray_color(r, worldObj, 15));
 
                 // color[0] += Math.floor(255.999 * clamp(pixel_color[0], 0.0, 0.999));
                 // color[1] += Math.floor(255.999 * clamp(pixel_color[1], 0.0, 0.999));

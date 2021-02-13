@@ -15,26 +15,40 @@ function point(ctx, color, x, y) {
 }
 
 // случайный вектор в единчной сфере
-function ramdom_in_unit_sphere() {
+function random_in_unit_sphere() {
   while (true) {
     let p = glMatrix.vec3.fromValues(
       Math.random() * 2.0 - 1.0,
-      Math.random(-1, 1),
-      Math.random(-1, 1)
+      Math.random() * 2.0 - 1.0,
+      Math.random() * 2.0 - 1.0
+      // // Math.random() - 0.5 * 2.0,
+      // // Math.random() - 0.5 * 2.0,
+      // // Math.random() - 0.5 * 2.0
+      // Math.random(-1, 1),
+      // Math.random(-1, 1),
+      // Math.random(-1, 1)
     );
 
-    if (glMatrix.vec3.dot(p, p) >= 1) continue;
+    if (glMatrix.vec3.dot(p, p) >= 1.0) continue;
+    //glMatrix.vec3.normalize(p, p);
     return p;
   }
+
+  //   do {
+  //     vec3.set(p, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0, Math.random() * 2.0 - 1.0);
+  // } while (vec3.dot(p, p) >= 1.0);
+
+
+
 }
 export function ramdom_unit_vector() {
-  let p = ramdom_in_unit_sphere();
-  glMatrix.vec3.normalize(p, p);
+  let p = random_in_unit_sphere();
+  //glMatrix.vec3.normalize(p, p);
   return p;
 }
 
 function ramdom_in_hemisphere(normal) {
-  let in_unit_sphere = ramdom_in_unit_sphere();
+  let in_unit_sphere = random_in_unit_sphere();
   if (glMatrix.vec3.dot(in_unit_sphere, normal) > 0.0) {
     return in_unit_sphere;
   } else {
@@ -65,7 +79,7 @@ function ray_color(r, worldObj, depth) {
     let bias = 0.001;
     let attenuation = glMatrix.vec3.create();
 
-    let test = glMatrix.vec3.fromValues(0.5, 0.5, 0.5);
+    //let test = glMatrix.vec3.fromValues(0.5, 0.5, 0.5);
 
     if (worldObj[index].hit(r, bias, Number.MAX_SAFE_INTEGER, rec)) {
       let struct_scatter = rec.matetial.scatter(r, rec, attenuation, scattered);
@@ -97,7 +111,8 @@ function ray_color(r, worldObj, depth) {
   let color = glMatrix.vec3.create();
   let t = 1.0 - 0.5 * (unit_direction[1] + 1.0); // -1  +1  to  0 - 1
   let it = 1.0 - t;
-  let vec_one = glMatrix.vec3.fromValues(it * 0.0, it * 0.5, it * 0.9); // химичис с цветами
+  //let vec_one = glMatrix.vec3.fromValues(it * 0.0, it * 0.5, it * 0.9); // химичис с цветами
+  let vec_one = glMatrix.vec3.fromValues(it * 0.5, it * 0.7, it * 1.0); // химичис с цветами
   let vec_two = glMatrix.vec3.fromValues(t * 1.0, t * 1.0, t * 1.0);
   glMatrix.vec3.add(vec_one, vec_one, vec_two);
 
@@ -113,8 +128,8 @@ function clamp(x, min, max) {
 
 function main() {
   let canvas = document.getElementById("RayTracing");
-  canvas.width = 800;
-  canvas.height = 400;
+  canvas.width = 400;
+  canvas.height = 200;
   let ctx = canvas.getContext("2d");
 
   let color = "rgb(0, 0, 0)";
@@ -123,34 +138,18 @@ function main() {
   // point(ctx, color, 10, 85);
   // point(ctx, color, 10, 59);
   let R = Math.cos(Math.PI / 4);
-  let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.8, 0.4, 0.0));
-  let material_center = new Lambertian(glMatrix.vec3.fromValues(0.1, 0.2, 0.5));
+  //let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.7, 0.7, 0.7));
+  let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.7, 0.7, 0.7));
+  let material_Lambertian_RED = new Lambertian(glMatrix.vec3.fromValues(0.9, 0.0, 0.0));
+  let material_Lambertian_GREEN = new Lambertian(glMatrix.vec3.fromValues(0.0, 0.9, 0.0));
+  let material_Lambertian_BLUE = new Lambertian(glMatrix.vec3.fromValues(0.0, 0.0, 0.9));
   let material_right = new Metal(glMatrix.vec3.fromValues(0.5, 0.5, 0.5), 0.1);
-  let material_left = new Dielectric(
-    glMatrix.vec3.fromValues(1.0, 1.0, 1.0),
-    1.52
-  );
+  let material_left = new Dielectric(glMatrix.vec3.fromValues(1.0, 1.0, 1.0), 1.52);
 
-  let sphere1 = new Sphere(
-    glMatrix.vec3.fromValues(0.0, 0.0, -2.0),
-    0.5,
-    material_center
-  );
-  let sphere2 = new Sphere(
-    glMatrix.vec3.fromValues(1.0, 0.0, -4.0),
-    0.5,
-    material_right
-  );
-  let sphere3 = new Sphere(
-    glMatrix.vec3.fromValues(-1.0, 0.0, -1.0),
-    0.5,
-    material_left
-  );
-  let sphere4 = new Sphere(
-    glMatrix.vec3.fromValues(0.0, -1000.5, -1),
-    1000.0,
-    material_ground
-  );
+  let sphere1 = new Sphere(glMatrix.vec3.fromValues(0.0, 0.0, -1.0), 0.5, material_Lambertian_RED);
+  let sphere2 = new Sphere(glMatrix.vec3.fromValues(1.0, 0.0, -2.0), 0.5, material_Lambertian_GREEN);
+  let sphere3 = new Sphere(glMatrix.vec3.fromValues(-1.0, 0.0, -0.0), 0.5, material_Lambertian_BLUE);
+  let sphere4 = new Sphere(glMatrix.vec3.fromValues(0.0, -1000.5, -1), 1000.0, material_ground);
 
   let worldObj = [];
   worldObj.push(sphere1);
@@ -162,7 +161,7 @@ function main() {
   const image_heigth = canvas.height;
   //let cam = new Camera(image_width, image_heigth);
   //camera cam(point3(-2, 2, 1), point3(0, 0, -1), vec3(0, 1, 0), 20, aspect_ratio);
-  let lookfrom = glMatrix.vec3.fromValues(0, 0, 0.0);
+  let lookfrom = glMatrix.vec3.fromValues(0, 0, 1.0);
   let lookat = glMatrix.vec3.fromValues(0, 0, -2);
   let vup = glMatrix.vec3.fromValues(0, 1, 0);
 
@@ -184,7 +183,7 @@ function main() {
 
         let r = cam.get_ray(u, v);
         //pixel_color = ray_color(r, worldObj, 50);
-        let pixel_color_from_ray = ray_color(r, worldObj, 5);
+        let pixel_color_from_ray = ray_color(r, worldObj, 15);
         glMatrix.vec3.add(pixel_color, pixel_color, pixel_color_from_ray);
       }
 

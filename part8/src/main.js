@@ -92,7 +92,7 @@ function ray_color(r, worldObj, depth) {
     let color = glMatrix.vec3.create();
     let t = 1.0 - (0.5 * (unit_direction[1] + 1.0)); // -1  +1  to  0 - 1
     let it = (1.0 - t);
-    let vec_one = glMatrix.vec3.fromValues(it * 0.0, it * 0.5, it * 0.9);  // химичис с цветами 
+    let vec_one = glMatrix.vec3.fromValues(it * 0.5, it * 0.7, it * 0.9);  // химичис с цветами 
     let vec_two = glMatrix.vec3.fromValues(t * 1.0, t * 1.0, t * 1.0);
     glMatrix.vec3.add(vec_one, vec_one, vec_two);
 
@@ -112,8 +112,8 @@ function clamp(x, min, max) {
 function main() {
 
     let canvas = document.getElementById("RayTracing");
-    canvas.width = 800;
-    canvas.height = 400;
+    canvas.width = 400;
+    canvas.height = 200;
     let ctx = canvas.getContext('2d');
 
     let color = 'rgb(0, 0, 0)';
@@ -123,15 +123,15 @@ function main() {
     // point(ctx, color, 10, 59);
 
 
-    let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.8, 0.4, 0.0));
-    let material_center = new Lambertian(glMatrix.vec3.fromValues(0.9, 0.9, 0.9));
+    let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.8, 0.8, 0.0));
+    let material_center = new Lambertian(glMatrix.vec3.fromValues(0.3, 0.3, 1.0));
     let material_right = new Metal(glMatrix.vec3.fromValues(0.5, 0.5, 0.5), 0.1);
     let material_left = new Dielectric(glMatrix.vec3.fromValues(1.0, 1.0, 1.0), 1.52);
 
-    let sphere1 = new Sphere(glMatrix.vec3.fromValues(0.0, 0.0, .0), 0.5, material_center);
-    let sphere2 = new Sphere(glMatrix.vec3.fromValues(1.0, 0.0, .0), 0.5, material_center);
-    let sphere3 = new Sphere(glMatrix.vec3.fromValues(-1.0, 0.0, .0), 0.5, material_center);
-    let sphere4 = new Sphere(glMatrix.vec3.fromValues(0.0, -1000.5, -1), 1000.0, material_ground);
+    let sphere1 = new Sphere(glMatrix.vec3.fromValues(0.0, 0.0, -0.5), 0.5, material_center);
+    let sphere2 = new Sphere(glMatrix.vec3.fromValues(1.0, 0.0, -0.5), 0.5, material_right);
+    let sphere3 = new Sphere(glMatrix.vec3.fromValues(-1.0, 0.0, -0.5), 0.5, material_left);
+    let sphere4 = new Sphere(glMatrix.vec3.fromValues(0.0, -10000.5, -1), 10000.0, material_ground);
 
     let worldObj = [];
     worldObj.push(sphere1);
@@ -158,7 +158,7 @@ function main() {
 
                 let r = cam.get_ray(u, v);
                 //pixel_color = ray_color(r, worldObj, 50);
-                let pixel_color_from_ray = ray_color(r, worldObj, 50);
+                let pixel_color_from_ray = ray_color(r, worldObj, 15);
                 glMatrix.vec3.add(pixel_color, pixel_color, pixel_color_from_ray);
 
             }

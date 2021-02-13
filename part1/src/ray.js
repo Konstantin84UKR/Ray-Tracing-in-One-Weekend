@@ -1,19 +1,19 @@
 export default class Ray {
     constructor(origin, direction) {
-        this.origin = origin;
-        this.direction = direction;
+        this._origin = origin;
+        this._direction = direction;
         //this.t = 1;
     }
-    // get origin() {
-    //     return this.origin;
+    get origin() {
+        return this._origin;
 
-    // }
-    // get direction() {
-    //     return this.direction;
-    // }
+    }
+    get direction() {
+        return this._direction;
+    }
 
     getAt(t) {
-        return this.origin + t * this.direction;
+        return this._origin + t * this._direction;
     }
 
 }

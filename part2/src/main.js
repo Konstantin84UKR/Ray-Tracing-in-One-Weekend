@@ -47,26 +47,36 @@ function ray_color(r) {
 }
 
 function hit_sphere(center, radius, ray) {
-    //vec3 oc = r.origin() - center;
 
+    //Геометрическое решение.
     let oc = glMatrix.vec3.create();
     glMatrix.vec3.subtract(oc, ray.origin, center);
-
-    let a = glMatrix.vec3.dot(ray.direction, ray.direction);
-
+    glMatrix.vec3.normalize(ray.direction, ray.direction);
 
     let dot_oc_direction = glMatrix.vec3.dot(oc, ray.direction);
-    let b = 2.0 * dot_oc_direction;
 
     let dot_c_c = glMatrix.vec3.dot(oc, oc);
-    let c = dot_c_c - radius * radius;
+    let t2hc = radius - Math.sqrt(dot_c_c - dot_oc_direction * dot_oc_direction);
 
-    let discriminant = b * b - 4 * a * c;
-    //console.log("discriminant = " + discriminant);
-
-    return discriminant;
+    return t2hc;
 
 
+    // //////////////////////////////////////////////////////////////
+    // // Алгебраическое решение
+    // let oc = glMatrix.vec3.create();
+    // glMatrix.vec3.subtract(oc, ray.origin, center);
+
+    // let a = glMatrix.vec3.dot(ray.direction, ray.direction);
+    // let dot_oc_direction = glMatrix.vec3.dot(oc, ray.direction);
+    // let b = 2.0 * dot_oc_direction;
+
+    // let dot_c_c = glMatrix.vec3.dot(oc, oc);
+    // let c = dot_c_c - radius * radius;
+
+    // let discriminant = b * b - 4 * a * c;
+    // //console.log("discriminant = " + discriminant);
+
+    // return discriminant;
 }
 
 function main() {
@@ -87,19 +97,11 @@ function main() {
     const image_heigth = canvas.height;
     const aspect_ratio = image_width / image_heigth;
 
-    const viewport_heigth = 2.0;  // высота канваса 
-    const viewport_width = aspect_ratio * viewport_heigth;  // ширинаканваса зависит от отношения сторон
-    const focal_length = 100.0; // дистанция до конца системы координат
+    // const viewport_heigth = 2.0;  // высота канваса 
+    // const viewport_width = aspect_ratio * viewport_heigth;  // ширинаканваса зависит от отношения сторон
+    // const focal_length = 100.0; // дистанция до конца системы координат
 
-    //let origin = glMatrix.vec3.fromValues(image_width / 2, image_heigth / 2, 0); // ищем центр 
     let origin = glMatrix.vec3.fromValues(0, 0, 0.0);
-
-    //let horizontal = glMatrix.vec3.fromValues(viewport_width, 0, 0);
-    //let vertical = glMatrix.vec3.fromValues(0, viewport_heigth, 0);
-    //let focal = glMatrix.vec3.fromValues(0, 0, focal_length);
-    // let lower_left_corner = origin - horizontal / 2 - vertical / 2 - focal;
-
-
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; j += 1) {

@@ -124,14 +124,14 @@ function main() {
     const image_width = canvas.width;
     const image_heigth = canvas.height;
     let cam = new Camera(image_width, image_heigth);
-
+    const samples_per_pixel = 4;
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; j += 1) {
 
         for (let i = 0; i < image_width; i += 1) {
 
             let color = glMatrix.vec3.create();
-            for (let index = 0; index < 4; index++) {
+            for (let index = 0; index < samples_per_pixel; index++) {
 
                 let u = (((i + Math.random() * 0.5) / image_width) - 0.5) * 2.0 * cam.aspect_ratio;
                 let v = (((j + Math.random() * 0.5) / image_heigth) - 0.5) * 2.0 * - 1;

@@ -12,22 +12,29 @@ export default class Lambertian extends Material {
     scatter(r_in, rec, attenuation, scattered) {
 
         let scatter_direction = glMatrix.vec3.create();
-        let ram_unit_vec = ramdom_unit_vector();
-        glMatrix.vec3.add(scatter_direction, ram_unit_vec, rec.p);
-        glMatrix.vec3.add(scatter_direction, scatter_direction, rec.normal);
-        glMatrix.vec3.normalize(scatter_direction, scatter_direction);
-        // glMatrix.vec3.sub(scatter_direction, scatter_direction, rec.p);
+        // let ram_unit_vec = ramdom_unit_vector();
+        // glMatrix.vec3.add(scatter_direction, ram_unit_vec, rec.p);
+        // glMatrix.vec3.add(scatter_direction, scatter_direction, rec.normal);
+        // glMatrix.vec3.normalize(scatter_direction, scatter_direction);
 
-        // glMatrix.vec3.add(p_plus_n, rec.p, rec.normal);
-        // glMatrix.vec3.add(target, p_plus_n, ramdom_in_unit);
-        // glMatrix.vec3.sub(p_minus_tangent, target, rec.p);
+
+        let target = glMatrix.vec3.create();
+        let p_plus_n = glMatrix.vec3.create();
+        let p_minus_tangent = glMatrix.vec3.create();
+
+        let ramdom_in_unit = ramdom_unit_vector();
+        // получаем случайный вектор от отчки каcания в пределах еденичной сферы
+        glMatrix.vec3.add(p_plus_n, rec.p, rec.normal);
+        glMatrix.vec3.add(target, p_plus_n, ramdom_in_unit);
+        glMatrix.vec3.sub(scatter_direction, target, rec.p);
 
 
         if (this.near_zero(scatter_direction)) {
             scatter_direction = rec.normal;
         }
-
-        scattered = new Ray(rec.p, scatter_direction);
+        let scatter_origin = glMatrix.vec3.create();
+        glMatrix.vec3.copy(scatter_origin, rec.p);
+        scattered = new Ray(scatter_origin, scatter_direction);
         //attenuation = this.albedo;
         glMatrix.vec3.copy(attenuation, this.albedo);
 

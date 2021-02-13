@@ -23,8 +23,8 @@ function ramdom_in_unit_sphere() {
   while (true) {
     let p = glMatrix.vec3.fromValues(
       Math.random() * 2.0 - 1.0,
-      Math.random(-1, 1),
-      Math.random(-1, 1)
+      Math.random() * 2.0 - 1.0,
+      Math.random() * 2.0 - 1.0
     );
 
     if (glMatrix.vec3.dot(p, p) >= 1) continue;
@@ -107,7 +107,7 @@ function ray_color(r, worldObj, depth) {
   let color = glMatrix.vec3.create();
   let t = 1.0 - 0.5 * (unit_direction[1] + 1.0); // -1  +1  to  0 - 1
   let it = 1.0 - t;
-  let vec_one = glMatrix.vec3.fromValues(it * 0.0, it * 0.5, it * 0.9); // химичис с цветами
+  let vec_one = glMatrix.vec3.fromValues(it * 0.5, it * 0.7, it * 0.95); // химичис с цветами
   let vec_two = glMatrix.vec3.fromValues(t * 1.0, t * 1.0, t * 1.0);
   glMatrix.vec3.add(vec_one, vec_one, vec_two);
 
@@ -126,37 +126,40 @@ function random_scene() {
   let worldObj = [];
 
   let material_ground = new Lambertian(glMatrix.vec3.fromValues(0.5, 0.5, 0.5));
-  let sphere_ground = new Sphere(glMatrix.vec3.fromValues(0.0, -1000.0, 0), 1000.0, material_ground);
+  let sphere_ground = new Sphere(glMatrix.vec3.fromValues(0.0, -10000.0, 0), 10000.0, material_ground);
   //worldObj.push(sphere_ground);
 
   let material_Lambertian = new Lambertian(glMatrix.vec3.fromValues(0.4, 0.2, 0.1));
-  let sphere1 = new Sphere(glMatrix.vec3.fromValues(4.0, 1.0, 2.0), 1.0, material_Lambertian);
-
   let material_Metal = new Metal(glMatrix.vec3.fromValues(0.7, 0.6, 0.5), 0.0);
-  let sphere3 = new Sphere(glMatrix.vec3.fromValues(-4.0, 1.0, 0.0), 1.0, material_Metal);
-
   let material_Dielectric = new Dielectric(glMatrix.vec3.fromValues(1.0, 1.0, 1.0), 1.52);
-  let sphere2 = new Sphere(glMatrix.vec3.fromValues(-0.0, 1.0, 0.0), 1.0, material_Dielectric);
+
+  let sphere1 = new Sphere(glMatrix.vec3.fromValues(4.0, 1.0, 0.0), 1.0, material_Metal);
+  let sphere3 = new Sphere(glMatrix.vec3.fromValues(-4.0, 1.0, 0.0), 1.0, material_Lambertian);
+  let sphere2 = new Sphere(glMatrix.vec3.fromValues(0.0, 1.0, 0.0), 1.0, material_Dielectric);
 
   for (let i = -11; i < 11; i++) {
-
-
     for (let j = -11; j < 11; j++) {
+
+      if ((Math.abs(i) <= 5.0 && Math.abs(i) >= 3.0) || (Math.abs(i) <= 1.0 && Math.abs(i) >= 0.0) && j === 1) {
+        continue;
+      }
+
 
       let mat = Math.random();
       let material_Little;
-      if (mat > 0.5) {
+      if (mat > 0.3) {
         material_Little = new Lambertian(glMatrix.vec3.fromValues(Math.random(), Math.random(), Math.random()));
-      } else if (mat > 0.3) {
+      } else if (mat > 0.1) {
         material_Little = new Metal(glMatrix.vec3.fromValues(0.5, 0.5, 0.5), 0.1);
       } else {
         material_Little = new Dielectric(glMatrix.vec3.fromValues(1.0, 1.0, 1.0), 1.52);
       }
 
-      let x = getRndInteger(-5, 5);
-      let z = getRndInteger(-5, 5);
+      let x = getRndInteger(-2, 2);
+      let z = getRndInteger(-2, 2);
 
-      let sphereLittle = new Sphere(glMatrix.vec3.fromValues(x + i, 0.1, z + j), 0.1, material_Little);
+      //let sphereLittle = new Sphere(glMatrix.vec3.fromValues(i + x * Math.random(), 0.2, j + z * Math.random()), 0.2, material_Little);
+      let sphereLittle = new Sphere(glMatrix.vec3.fromValues(i + Math.random(), 0.2, j + Math.random()), 0.2, material_Little);
       worldObj.push(sphereLittle);
     }
 
@@ -183,12 +186,12 @@ function main() {
   const image_width = canvas.width;
   const image_heigth = canvas.height;
 
-  let lookfrom = glMatrix.vec3.fromValues(-0, 10, -5.0);
+  let lookfrom = glMatrix.vec3.fromValues(6, 1.5, 2.5);
   let lookat = glMatrix.vec3.fromValues(0, 0, 0);
   let vup = glMatrix.vec3.fromValues(0, 1, 0);
 
   let cam = new Camera(lookfrom, lookat, vup, 60, image_width / image_heigth);
-  const samples_per_pixel = 4;
+  const samples_per_pixel = 8;
 
   // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат
   for (let j = 0; j < image_heigth; j += 1) {
