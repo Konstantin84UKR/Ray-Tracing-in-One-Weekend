@@ -2,7 +2,7 @@ export default class Ray {
     constructor(origin, direction) {
         this._origin = origin;
         this._direction = direction;
-        //this.t = 1;
+        // this._t = 1;
     }
     get origin() {
         return this._origin;
