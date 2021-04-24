@@ -11,7 +11,6 @@ export default class Camera {
         this.horizontal = glMatrix.vec3.fromValues(this.viewport_width, 0, 0);
         this.vertical = glMatrix.vec3.fromValues(0, this.viewport_width, 0);
 
-
     }
 
     get_ray(u, v) {

@@ -13,15 +13,31 @@ function point(ctx, color, x, y) {
     ctx.fillRect(x, y, 1, 1);
 }
 
+// // случайный вектор в единчной сфере
+// function ramdom_in_unit_sphere() {
+//     while (true) {
+//         let p = glMatrix.vec3.fromValues(Math.random(-1, 1), Math.random(-1, 1), Math.random(-1, 1));
+
+//         if (glMatrix.vec3.dot(p, p) >= 1) continue;
+//         return p;
+//     }
+// }
+
 // случайный вектор в единчной сфере
 function ramdom_in_unit_sphere() {
     while (true) {
-        let p = glMatrix.vec3.fromValues(Math.random(-1, 1), Math.random(-1, 1), Math.random(-1, 1));
-
-        if (glMatrix.vec3.dot(p, p) >= 1) continue;
-        return p;
+      let p = glMatrix.vec3.fromValues(
+        Math.random() * 2.0 - 1.0,
+        Math.random() * 2.0 - 1.0,
+        Math.random() * 2.0 - 1.0
+      );
+  
+      if (glMatrix.vec3.dot(p, p) >= 1.0) continue;
+      //glMatrix.vec3.normalize(p, p);
+      return p;
     }
-}
+  }
+
 function ramdom_unit_vector() {
     let p = ramdom_in_unit_sphere();
     glMatrix.vec3.normalize(p, p);
@@ -97,8 +113,8 @@ function clamp(x, min, max) {
 function main() {
 
     let canvas = document.getElementById("RayTracing");
-    canvas.width = 400;
-    canvas.height = 200;
+    canvas.width = 800;
+    canvas.height = 400;
     let ctx = canvas.getContext('2d');
 
     let color = 'rgb(200, 0, 0)';
@@ -117,7 +133,7 @@ function main() {
     const image_width = canvas.width;
     const image_heigth = canvas.height;
     let cam = new Camera(image_width, image_heigth);
-    const samples_per_pixel = 40;
+    const samples_per_pixel = 256;
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; j += 1) {
