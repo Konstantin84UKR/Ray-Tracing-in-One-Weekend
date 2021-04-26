@@ -28,8 +28,8 @@ function ray_color(r) {
 function main() {
 
     let canvas = document.getElementById("RayTracing");
-    canvas.width = 400;
-    canvas.height = 200;
+    canvas.width = 800;
+    canvas.height = 400;
     let ctx = canvas.getContext('2d');
 
     let color = 'rgb(200, 0, 0)';

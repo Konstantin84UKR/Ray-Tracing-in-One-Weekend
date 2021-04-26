@@ -112,8 +112,8 @@ function clamp(x, min, max) {
 function main() {
 
     let canvas = document.getElementById("RayTracing");
-    canvas.width = 400;
-    canvas.height = 200;
+    canvas.width = 800;
+    canvas.height = 400;
     let ctx = canvas.getContext('2d');
 
     let color = 'rgb(0, 0, 0)';
@@ -142,7 +142,7 @@ function main() {
     const image_width = canvas.width;
     const image_heigth = canvas.height;
     let cam = new Camera(image_width, image_heigth);
-    const samples_per_pixel = 40;
+    const samples_per_pixel = 32;
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; j += 1) {
@@ -158,7 +158,7 @@ function main() {
 
                 let r = cam.get_ray(u, v);
                 //pixel_color = ray_color(r, worldObj, 50);
-                let pixel_color_from_ray = ray_color(r, worldObj, 15);
+                let pixel_color_from_ray = ray_color(r, worldObj, 5);
                 glMatrix.vec3.add(pixel_color, pixel_color, pixel_color_from_ray);
 
             }

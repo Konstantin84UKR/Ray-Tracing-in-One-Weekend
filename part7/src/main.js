@@ -13,16 +13,6 @@ function point(ctx, color, x, y) {
     ctx.fillRect(x, y, 1, 1);
 }
 
-// // случайный вектор в единчной сфере
-// function ramdom_in_unit_sphere() {
-//     while (true) {
-//         let p = glMatrix.vec3.fromValues(Math.random(-1, 1), Math.random(-1, 1), Math.random(-1, 1));
-
-//         if (glMatrix.vec3.dot(p, p) >= 1) continue;
-//         return p;
-//     }
-// }
-
 // случайный вектор в единчной сфере
 function ramdom_in_unit_sphere() {
     while (true) {
@@ -33,7 +23,6 @@ function ramdom_in_unit_sphere() {
       );
   
       if (glMatrix.vec3.dot(p, p) >= 1.0) continue;
-      //glMatrix.vec3.normalize(p, p);
       return p;
     }
   }
@@ -125,7 +114,7 @@ function main() {
 
 
     let sphere1 = new Sphere(glMatrix.vec3.fromValues(0, 0, -1.0), 0.5);
-    let sphere2 = new Sphere(glMatrix.vec3.fromValues(0.0, -100.5, -1), 100.0);
+    let sphere2 = new Sphere(glMatrix.vec3.fromValues(0.0, -1000.5, -1), 1000.0);
     let worldObj = [];
     worldObj.push(sphere1);
     worldObj.push(sphere2);
@@ -133,7 +122,7 @@ function main() {
     const image_width = canvas.width;
     const image_heigth = canvas.height;
     let cam = new Camera(image_width, image_heigth);
-    const samples_per_pixel = 256;
+    const samples_per_pixel = 16;
 
     // В цикле проходим все пиксели и вычисляем цвет в зависимости от координат 
     for (let j = 0; j < image_heigth; j += 1) {
@@ -154,7 +143,7 @@ function main() {
                 let r = cam.get_ray(u, v);
                 //pixel_color = ray_color(r, worldObj, 50);
 
-                glMatrix.vec3.add(pixel_color, pixel_color, ray_color(r, worldObj, 50));
+                glMatrix.vec3.add(pixel_color, pixel_color, ray_color(r, worldObj, 5));
 
                 // color[0] += Math.floor(255.999 * clamp(pixel_color[0], 0.0, 0.999));
                 // color[1] += Math.floor(255.999 * clamp(pixel_color[1], 0.0, 0.999));
