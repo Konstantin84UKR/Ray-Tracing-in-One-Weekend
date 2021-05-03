@@ -12,12 +12,7 @@ export default class Lambertian extends Material {
     scatter(r_in, rec, attenuation, scattered) {
 
         let scatter_direction = glMatrix.vec3.create();
-        // let ram_unit_vec = ramdom_unit_vector();
-        // glMatrix.vec3.add(scatter_direction, ram_unit_vec, rec.p);
-        // glMatrix.vec3.add(scatter_direction, scatter_direction, rec.normal);
-        // glMatrix.vec3.normalize(scatter_direction, scatter_direction);
-        // glMatrix.vec3.sub(scatter_direction, scatter_direction, rec.p);
-
+       
         let target = glMatrix.vec3.create();
         let p_plus_n = glMatrix.vec3.create();
         let p_minus_tangent = glMatrix.vec3.create();
